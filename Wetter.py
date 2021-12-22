@@ -17,7 +17,8 @@ class WetterError(Exception):
     pass
 
 def holeAussentemperaturVomServer():
-    url = "http://api.openweathermap.org/data/2.5/weather?q=Lochhausen&mode=xml&APPID=9acd9ad2302f1a6c2437b69ca19c7da5"
+    url = "http://api.openweathermap.org/data/2.5/weather?q=Scharnitz&mode=xml&APPID=6583c57443ce6223b371b4d5ae8d9e34"
+    #api.openweathermap.org/data/2.5/weather?q=Scharnitz&appid=6583c57443ce6223b371b4d5ae8d9e34
 
     try:
         xmlText = request.urlopen(url,timeout=5)

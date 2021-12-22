@@ -1,4 +1,4 @@
-TEMPERATUR_NOTABSCHALTUNG = 44.0 # Ab welcher Temperatur soll der Mischer kommplett zu gedreht werden?
+TEMPERATUR_NOTABSCHALTUNG = 45.0 # Ab welcher Temperatur soll der Mischer kommplett zu gedreht werden?
 
 from time import sleep
 import threading

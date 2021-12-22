@@ -1,5 +1,5 @@
-RELAIS_AUF_PIN = 18                   # Pin fuer das Relais, das den Mischermotor in auf-Richtung ansteuert
-RELAIS_ZU_PIN = 16                    # Pin fuer das Relais, das den Mischermotor in zu-Richtung ansteuert
+RELAIS_AUF_PIN = 16                   # Pin fuer das Relais, das den Mischermotor in auf-Richtung ansteuert
+RELAIS_ZU_PIN = 18                    # Pin fuer das Relais, das den Mischermotor in zu-Richtung ansteuert
 
 import atexit
 import threading

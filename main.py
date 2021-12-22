@@ -3,8 +3,8 @@ MAX_REGELDIFFERENZ = 10.0 # Nur maximal 10 Grad Regelabweichung werden beruecksi
 HYSTERESE_VORLAUFTEMPERATUR = 0.8 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 STELLZEIT_PRO_KELVIN_TEMP_DIFF = 0.3; # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden?
 
-SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 42.0
-SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 35.0
+SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 35.0
+SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 28.0
 
 from time import sleep
 import Temperatursensor

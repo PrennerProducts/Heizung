@@ -1,4 +1,4 @@
-TEMPERATUR_SENSOR_ID = '28-000004b8e80e' # Originalsensor, der aktuell in im Mischer verbaut ist
+TEMPERATUR_SENSOR_ID = '28-012032c8ffc3' # Originalsensor, der aktuell in im Mischer verbaut ist
 #TEMPERATUR_SENSOR_ID = '28-0000053459d1' # Ersatzsensor, der an ein Netzwerkkabel gelötet ist
 
 vorlauftemperatur = 99.9 # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
@@ -10,8 +10,6 @@ from time import sleep
 class TemperatureSensorError(Exception):
     pass
 
-
-"""
 Startet die Temperaturmessung und gibt das Ergebnis zurueck.
 Die Funktion blockiert waehrend der Messung.
 Schlaegt die Messung fehl, wird eine Exception geworfen.
