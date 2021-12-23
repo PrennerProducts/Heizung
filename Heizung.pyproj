@@ -24,6 +24,7 @@
     <Compile Include="main.py" />
     <Compile Include="mainloop.py" />
     <Compile Include="Mischer.py">
+    <Compile Include="Solarpufferwaereme_in_Heizung.py"> 
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mischer_alt.py" />

@@ -1,7 +1,10 @@
 TEMPERATUR_SENSOR_ID = '28-012032c8ffc3' # Originalsensor, der aktuell in im Mischer verbaut ist
-#TEMPERATUR_SENSOR_ID = '28-0000053459d1' # Ersatzsensor, der an ein Netzwerkkabel gelötet ist
+PUFFER_TEMPERATUR_SENSOR_ID = '28-012032d0cefb' # Temperatursensor im Solarpuffe
+BOILER_TEMPERATUR_SENSOR_ID = '28-012032888753' # Temperatursensor im Warmwasserboiler
 
 vorlauftemperatur = 99.9 # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
+puffertemperatur = 0     # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
+boilertemperatur = 99.9  # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
 
 import threading
 import sys
@@ -10,13 +13,13 @@ from time import sleep
 class TemperatureSensorError(Exception):
     pass
 
-Startet die Temperaturmessung und gibt das Ergebnis zurueck.
+"""Startet die Temperaturmessung und gibt das Ergebnis zurueck.
 Die Funktion blockiert waehrend der Messung.
 Schlaegt die Messung fehl, wird eine Exception geworfen.
 """
-def leseTemperatursensorEinmal():
+def leseTemperatursensorEinmal(SENSOR):
     try:
-        with open("/sys/bus/w1/devices/" + TEMPERATUR_SENSOR_ID + "/w1_slave") as file:
+        with open("/sys/bus/w1/devices/" + SENSOR + "/w1_slave") as file:
             lines = file.read().split("\n")
     except IOError:
         raise TemperatureSensorError("Temperatursensor nicht gefunden!")
@@ -59,12 +62,18 @@ class TemperaturSensor(threading.Thread):
         self.daemon = True # damit sich das Programm beenden kann, ohne dass der Temperatursensor-Thread beendet werden muss
     def run(self):
         global vorlauftemperatur
+        global puffertemperatur
+        global boilertemperatur
         while True:
             try:
-                vorlauftemperatur = leseTemperatursensorEinmal()
+                vorlauftemperatur = leseTemperatursensorEinmal(TEMPERATUR_SENSOR_ID)
+                puffertemperatur = leseTemperatursensorEinmal(PUFFER_TEMPERATUR_SENSOR_ID)
+                boilertemperatur = leseTemperatursensorEinmal(BOILER_TEMPERATUR_SENSOR_ID)
             except Exception as e:
                 sys.stderr.write(str(e) + ' - Sicherheitshalber nehmen wir 99.9 Grad an!\n')
                 vorlauftemperatur = 99.9 # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
+                buffertemperatur = 0     # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
+                boilertemperatur = 99.9  # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
             sleep(1)
 
 temperaturSensor = TemperaturSensor()

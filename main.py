@@ -5,8 +5,8 @@ STELLZEIT_PRO_KELVIN_TEMP_DIFF = 0.3; # Wie viele Sekunden soll der Mischermotor
 
 SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 35.0
 SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 28.0
-
 from time import sleep
+from Solarpufferwaereme_in_Heizung import dreiWegeAuf, dreiWegeZu
 import Temperatursensor
 from Mischer import mischerAuf, mischerZu
 import Wetter
@@ -29,8 +29,10 @@ while(True):
     tIst = Temperatursensor.vorlauftemperatur
     tSoll = min(SOLL_VORLAUFTEMPERATUR_BEI_0_GRAD + (SOLL_VORLAUFTEMPERATUR_STEIGUNG * tAussen), TEMPERATUR_NOTABSCHALTUNG - 1.0) # Vorlauftemperatur darf maximal 1 Grad unterhalb der Notabschaltung sein.
     tDelta = tIst - tSoll
+    tPuffer = Temperatursensor.puffertemperatur
+    tBoiler = Temperatursensor.boilertemperatur
 
-    print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString)
+    print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, f"tPuffer=%f", tPuffer, f"tBoiler=%f", tBoiler)
 
     if Schleifenzaehler % REGELINTERVALL == 0: # Alle 10 Sekunden soll nachgeregelt werden
         tDeltaRegel = max(-MAX_REGELDIFFERENZ, min(tDelta, MAX_REGELDIFFERENZ)) # tDelta auf Regelbereich begrenzen
@@ -52,6 +54,23 @@ while(True):
             if historieString:
                 historieString += " "
             historieString += "{0:+.1f}".format(element)
+
+    # Solarpufferwärme_in_Heizung.py implementierung
+    hahnzeit = 10
+    hahnstatus_zu = True
+    if (tPuffer + 7) < tSoll:
+        dreiWegeAuf(hahnzeit)
+        hahnstatus_zu = False
+        print(f"Dreiwegehahn %f Sekunden auf", hahnzeit)
+    else:
+        if hahnstatus_zu == False:
+            dreiWegeZu(hahnzeit)
+            print("Dreiwegehahn %f Sekunden zu", hahnzeit)
+        else:
+            #dreiwegerelaisNeutral()
+            print("Dreiwege ist zu.")       
+
+    print("MEIN kleiner DEBUG:" ,Temperatursensor.vorlauftemperatur, Temperatursensor.puffertemperatur, Temperatursensor.boilertemperatur)
 
     Schleifenzaehler = Schleifenzaehler + 1
     sleep(1)
