@@ -1,6 +1,8 @@
-REGELINTERVALL = 10 # nur alle 10 Sekunden, soll der Mischermotor angesteuert werden werden
+REGELINTERVALL = 10 # nur alle 10 Sekunden, soll der Mischermotor angesteuert werden 
+PUFFERINTERVALL = 10 # nur alle 10 minuten, soll der Dreiwegehahn angesteuert werden
 MAX_REGELDIFFERENZ = 10.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
 HYSTERESE_VORLAUFTEMPERATUR = 0.8 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
+PUFFERHYSTERESE = 6 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 STELLZEIT_PRO_KELVIN_TEMP_DIFF = 0.3; # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden?
 
 SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 35.0
@@ -22,7 +24,10 @@ historieString = ""
 
 Schleifenzaehler = 0
 
-sleep(3) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
+hahnzeit = 10 # Sekunden die von Hahn benötigt werden, um die Stellung zu wechseln
+hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None
+
+sleep(5) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
 
 while(True):
     tAussen = Wetter.aussentemperatur
@@ -32,7 +37,7 @@ while(True):
     tPuffer = Temperatursensor.puffertemperatur
     tBoiler = Temperatursensor.boilertemperatur
 
-    print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, f"tPuffer=%f", tPuffer, f"tBoiler=%f", tBoiler)
+    print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, f"tPuffer={tPuffer}", f"tBoiler={tBoiler}")
 
     if Schleifenzaehler % REGELINTERVALL == 0: # Alle 10 Sekunden soll nachgeregelt werden
         tDeltaRegel = max(-MAX_REGELDIFFERENZ, min(tDelta, MAX_REGELDIFFERENZ)) # tDelta auf Regelbereich begrenzen
@@ -54,23 +59,30 @@ while(True):
             if historieString:
                 historieString += " "
             historieString += "{0:+.1f}".format(element)
+    
 
     # Solarpufferwärme_in_Heizung.py implementierung
-    hahnzeit = 10
-    hahnstatus_zu = True
-    if (tPuffer + 7) < tSoll:
-        dreiWegeAuf(hahnzeit)
-        hahnstatus_zu = False
-        print(f"Dreiwegehahn %f Sekunden auf", hahnzeit)
-    else:
-        if hahnstatus_zu == False:
-            dreiWegeZu(hahnzeit)
-            print("Dreiwegehahn %f Sekunden zu", hahnzeit)
+     
+    if Schleifenzaehler % PUFFERINTERVALL == 0: # alle PUFFERINTERWALL sekunden soll die Puffertemperatur kontrolliert werden und ggf der Dreiwegehahn geschalten werden.
+        if tPuffer >= (tSoll + PUFFERHYSTERESE):
+            if hahnstatus_auf == True:
+                print("Dreiwegehahn ist bereits auf.")
+                sleep(1)
+                continue
+            else:
+                dreiWegeAuf(hahnzeit)
+                hahnstatus_auf = True
+                print(f"Dreiwegehahn {hahnzeit} Sekunden auf")
         else:
-            #dreiwegerelaisNeutral()
-            print("Dreiwege ist zu.")       
+            if hahnstatus_auf == True or hahnstatus_auf == None:
+                dreiWegeZu(hahnzeit)
+                hahnstatus_auf = False
+                print(f"Dreiwegehahn {hahnzeit} Sekunden zu")
+            else:
+                hahnstatus_auf = False
+                print("Dreiwege ist bereits zu.") 
 
-    print("MEIN kleiner DEBUG:" ,Temperatursensor.vorlauftemperatur, Temperatursensor.puffertemperatur, Temperatursensor.boilertemperatur)
 
+    
     Schleifenzaehler = Schleifenzaehler + 1
     sleep(1)

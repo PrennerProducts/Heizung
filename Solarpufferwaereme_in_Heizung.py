@@ -1,7 +1,7 @@
 """Dieses Skript regelt einen 3-Wegehahn, dieser entscheidet ob Wäreme aus dem Solarpufferspeicher in den Heizkreislauf fließt"""
 
-DREI_WEGE_RELAIS_AUF_PIN = 11                   # Pin fuer das Relais, das den Mischermotor in auf-Richtung ansteuert
-DREI_WEGE_RELAIS_ZU_PIN = 13                    # Pin fuer das Relais, das den Mischermotor in zu-Richtung ansteuert
+DREI_WEGE_RELAIS_AUF_PIN = 37                   # Pin fuer das Relais, das den Mischermotor in auf-Richtung ansteuert
+DREI_WEGE_RELAIS_ZU_PIN = 38                    # Pin fuer das Relais, das den Mischermotor in zu-Richtung ansteuert
 
 import atexit
 import threading
@@ -15,8 +15,8 @@ GPIO.setup(DREI_WEGE_RELAIS_ZU_PIN, GPIO.OUT)
 atexit.register(GPIO.cleanup)
 
 
-dreiWegeSekundenAuf = 0.0              # interner Werte, der mit DreiWegeAuf() gesetzt werden kann
-dreiwegeSekundenZu = 0.0               # interner Werte, der mit DreiWegeZu() gesetzt werden kann
+dreiWegeSekundenAuf = 0              # interner Werte, der mit DreiWegeAuf() gesetzt werden kann
+dreiwegeSekundenZu = 0              # interner Werte, der mit DreiWegeZu() gesetzt werden kann
 
 
 """
@@ -74,7 +74,7 @@ class DreiwegeThread(threading.Thread):
         threading.Thread.__init__(self)
         self.daemon = True # damit sich das Programm beenden kann, ohne dass der Mischer-Thread beendet werden muss
     def run(self):
-        global dreiwegerelaisAuf
+        global dreiWegeSekundenAuf
         global dreiwegeSekundenZu
         while True:
             if dreiwegeSekundenZu:
@@ -90,7 +90,6 @@ class DreiwegeThread(threading.Thread):
 # Mischer Thread wird automatisch beim Laden des Moduls gestartet
 dreiwegeThread = DreiwegeThread()
 dreiwegeThread.start()
-
 
 
 
