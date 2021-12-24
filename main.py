@@ -14,7 +14,7 @@ PUFFERHYSTERESE = 6 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 
 #####################################################################################################
 # BoilerPumpe:
-BOILERINTERVALL = 100 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
+BOILERINTERVALL = 10 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
 sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
 BoilerHysterese = 2 # Hysterese
 
@@ -26,7 +26,7 @@ import Temperatursensor
 from Mischer import mischerAuf, mischerZu
 import Wetter
 from Notabschaltung import TEMPERATUR_NOTABSCHALTUNG
-from Boiler_Aufheizungs_Motor import boiler_pumpe_an, boiler_pumpe_aus
+from Boiler_Aufheizungs_Pumpe import boiler_pumpe_an, boiler_pumpe_aus
 #####################################################################################################
 
 SOLL_VORLAUFTEMPERATUR_BEI_0_GRAD = (SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD + SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD) / 2.0
