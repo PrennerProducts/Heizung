@@ -1,19 +1,32 @@
+#####################################################################################################
+# Mischer Motor Steuerung
 REGELINTERVALL = 10 # nur alle 10 Sekunden, soll der Mischermotor angesteuert werden 
-PUFFERINTERVALL = 10 # nur alle 10 minuten, soll der Dreiwegehahn angesteuert werden
 MAX_REGELDIFFERENZ = 10.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
 HYSTERESE_VORLAUFTEMPERATUR = 0.8 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
-PUFFERHYSTERESE = 6 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 STELLZEIT_PRO_KELVIN_TEMP_DIFF = 0.3; # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden?
-
 SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 35.0
 SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 28.0
+
+####################################################################################################
+# Solarpufferwaereme_in_Heizung
+PUFFERINTERVALL = 10 # nur alle %f Sekunden, soll der Dreiwegehahn angesteuert werden
+PUFFERHYSTERESE = 6 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
+
+#####################################################################################################
+# BoilerPumpe:
+BOILERINTERVALL = 100 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
+sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
+BoilerHysterese = 2 # Hysterese
+
+######################################################################################################
+
 from time import sleep
 from Solarpufferwaereme_in_Heizung import dreiWegeAuf, dreiWegeZu
 import Temperatursensor
 from Mischer import mischerAuf, mischerZu
 import Wetter
 from Notabschaltung import TEMPERATUR_NOTABSCHALTUNG
-
+from Boiler_Aufheizungs_Motor import boiler_pumpe_an, boiler_pumpe_aus
 #####################################################################################################
 
 SOLL_VORLAUFTEMPERATUR_BEI_0_GRAD = (SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD + SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD) / 2.0
@@ -82,7 +95,22 @@ while(True):
                 hahnstatus_auf = False
                 print("Dreiwege ist bereits zu.") 
 
+        if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
+            if tBoiler < (sollTempBoiler - BoilerHysterese):
+                if hahnstatus_auf == False:
+                    boiler_pumpe_an()
+                    print("Boilerpume ist an")
+                if hahnstatus_auf == True:
+                    if (tPuffer - 5) > (sollTempBoiler - BoilerHysterese):
+                        boiler_pumpe_an()
+                        print("Boilerpume ist an")
 
+                    else:
+                        boiler_pumpe_aus()
+                        print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
+            else:
+                boiler_pumpe_aus()
+                print("Boiler ist warm, Pumpe ist aus")
     
     Schleifenzaehler = Schleifenzaehler + 1
     sleep(1)
