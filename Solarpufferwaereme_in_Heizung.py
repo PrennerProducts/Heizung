@@ -1,7 +1,7 @@
 """Dieses Skript regelt einen 3-Wegehahn, dieser entscheidet ob Wäreme aus dem Solarpufferspeicher in den Heizkreislauf fließt"""
 
-DREI_WEGE_RELAIS_AUF_PIN = 37                   # Pin fuer das Relais, das den Mischermotor in auf-Richtung ansteuert
-DREI_WEGE_RELAIS_ZU_PIN = 38                    # Pin fuer das Relais, das den Mischermotor in zu-Richtung ansteuert
+DREI_WEGE_RELAIS_AUF_PIN = 16                   # Pin fuer das Relais, das den Mischermotor in auf-Richtung ansteuert
+DREI_WEGE_RELAIS_ZU_PIN = 18                   # Pin fuer das Relais, das den Mischermotor in zu-Richtung ansteuert
 
 import atexit
 import threading

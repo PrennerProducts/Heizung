@@ -2,7 +2,7 @@
 # der Öl-Heizung oder aus dem Solarpufferspeicher erhitzt.ArithmeticError()
 
 
-BOILER_RELAIS_PIN_AN = 40           # Pin für die Boilerpumpe noch ABÄNDERN!!! neues Relay 
+BOILER_RELAIS_PIN_AN = 22           # Pin für die Boilerpumpe noch ABÄNDERN!!! neues Relay 
 
 import atexit
 import threading
