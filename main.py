@@ -104,7 +104,7 @@ while(True):
                     boiler_pumpe_an()
                     print("Boilerpume ist an")
                 if hahnstatus_auf == True:
-                    if (tPuffer - 5) > (sollTempBoiler - BoilerHysterese):
+                    if (tPuffer) > (sollTempBoiler - BoilerHysterese):
                         boiler_pumpe_an()
                         print("Boilerpume ist an")
 
