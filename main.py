@@ -5,7 +5,7 @@ MAX_REGELDIFFERENZ = 10.0 # Nur maximal 10 Grad Regelabweichung werden beruecksi
 HYSTERESE_VORLAUFTEMPERATUR = 0.8 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 STELLZEIT_PRO_KELVIN_TEMP_DIFF = 0.3; # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden?
 SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 35.0
-SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 28.0
+SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 27.0
 
 ####################################################################################################
 # Solarpufferwaereme_in_Heizung
@@ -37,7 +37,7 @@ historieString = ""
 
 Schleifenzaehler = 0
 
-hahnzeit = 10 # Sekunden die von Hahn benötigt werden, um die Stellung zu wechseln
+hahnzeit = 125 # Sekunden die von Hahn benötigt werden, um die Stellung zu wechseln
 hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None
 
 sleep(5) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
@@ -65,7 +65,7 @@ while(True):
 
         # Historie
         historie.append(tIst - tSoll)
-        if len(historie) > 10:
+        if len(historie) > 5:
             del historie[0]
         historieString = ""
         for element in reversed(historie):
