@@ -10,12 +10,12 @@ class Notabschaltung(threading.Thread):
         threading.Thread.__init__(self)
         self.daemon = True # damit sich das Programm beenden kann, ohne dass der Notabschaltung-Thread beendet werden muss
     def run(self):
-        sleep(2) # warte 2 Sekunden bevor die Ueberwachung aktiviert wird, damit der Temperatursensor Zeit hat das erste mal ausgelesen zu werden
+        sleep(5) # warte 2 Sekunden bevor die Ueberwachung aktiviert wird, damit der Temperatursensor Zeit hat das erste mal ausgelesen zu werden
         while True:
             if(Temperatursensor.vorlauftemperatur >= TEMPERATUR_NOTABSCHALTUNG):
                 mischerZu(1)
                 print("Notabschaltung: Temperatursensor.vorlauftemperatur=%.1f TEMP_NOTABSCHALTUNG=%.1f" % (Temperatursensor.vorlauftemperatur, TEMPERATUR_NOTABSCHALTUNG))
-            sleep(1)
+            sleep(5)
 
 notabschaltung = Notabschaltung()
 notabschaltung.start()

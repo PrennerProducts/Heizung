@@ -51,7 +51,7 @@ def leseTemperatursensorWiederholt():
             else:
                 sys.stderr.write(str(e))
                 sys.stderr.write(" - Messung wird noch " + str(anzahlVersuche) + " mal wiederholt!\n")
-                sleep(1)
+                sleep(2)
 
 """
 Dies ist die Thread-Klasse, die als Daemon gestartet wird.

@@ -65,7 +65,7 @@ while(True):
 
         # Historie
         historie.append(tIst - tSoll)
-        if len(historie) > 10:
+        if len(historie) > 5:
             del historie[0]
         historieString = ""
         for element in reversed(historie):
