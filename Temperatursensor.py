@@ -1,10 +1,10 @@
-TEMPERATUR_SENSOR_ID = '28-012032c8ffc3' # Originalsensor, der aktuell in im Mischer verbaut ist
-PUFFER_TEMPERATUR_SENSOR_ID = '28-012032d0cefb' # Temperatursensor im Solarpuffe
-BOILER_TEMPERATUR_SENSOR_ID = '28-012032888753' # Temperatursensor im Warmwasserboiler
+TEMPERATUR_SENSOR_ID = '28-012032c8ffc3' # Sensor, der aktuell in im Mischer verbaut ist
+PUFFER_TEMPERATUR_SENSOR_ID = '28-012032d0cefb' # Temperatursensor im Solarpuffer
+BOILER_TEMPERATUR_SENSOR_ID = '28-012032c86187' # Temperatursensor im Warmwasserboiler (alt: 28-012032888753)
 
 vorlauftemperatur = 99.9 # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
-puffertemperatur = 0     # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
-boilertemperatur = 99.9  # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
+puffertemperatur = 10     # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
+boilertemperatur = 20  # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
 
 import threading
 import sys
@@ -38,7 +38,7 @@ Die Funktion blockiert waehrend der Messung.
 Schlaegt die Messung fehl, wird sie einige male wiederholt, ehe eine Exception geworfen wird.
 """
 def leseTemperatursensorWiederholt():
-    anzahlVersuche = 4
+    anzahlVersuche = 10
     while True:
         try:
             return leseTemperatursensorEinmal()
@@ -73,7 +73,7 @@ class TemperaturSensor(threading.Thread):
                 sys.stderr.write(str(e) + ' - Sicherheitshalber nehmen wir 99.9 Grad an!\n')
                 vorlauftemperatur = 99.9 # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
                 buffertemperatur = 0     # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
-                boilertemperatur = 99.9  # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
+                boilertemperatur = 20  # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
             sleep(1)
 
 temperaturSensor = TemperaturSensor()
