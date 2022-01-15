@@ -1,4 +1,4 @@
-TEMPERATUR_NOTABSCHALTUNG = 45.0 # Ab welcher Temperatur soll der Mischer kommplett zu gedreht werden?
+TEMPERATUR_NOTABSCHALTUNG = 55.0 # Ab welcher Temperatur soll der Mischer kommplett zu gedreht werden?
 
 from time import sleep
 import threading
@@ -10,7 +10,7 @@ class Notabschaltung(threading.Thread):
         threading.Thread.__init__(self)
         self.daemon = True # damit sich das Programm beenden kann, ohne dass der Notabschaltung-Thread beendet werden muss
     def run(self):
-        sleep(2) # warte zwei Sekunden bevor die Ueberwachung aktiviert wird, damit der Temperatursensor Zeit hat das erste mal ausgelesen zu werden
+        sleep(2) # warte 2 Sekunden bevor die Ueberwachung aktiviert wird, damit der Temperatursensor Zeit hat das erste mal ausgelesen zu werden
         while True:
             if(Temperatursensor.vorlauftemperatur >= TEMPERATUR_NOTABSCHALTUNG):
                 mischerZu(1)

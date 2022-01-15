@@ -1,4 +1,6 @@
+
 TEMPERATUR_SENSOR_ID = '28-012032c50263' # Sensor, der aktuell in im Mischer verbaut ist   (alt 28-012032c8ffc3)
+
 PUFFER_TEMPERATUR_SENSOR_ID = '28-012032d0cefb' # Temperatursensor im Solarpuffer
 BOILER_TEMPERATUR_SENSOR_ID = '28-012032c86187' # Temperatursensor im Warmwasserboiler (alt: 28-012032888753)
 
