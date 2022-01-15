@@ -80,23 +80,23 @@ while(True):
         if tPuffer >= (tSoll + PUFFERHYSTERESE):
             if hahnstatus_auf == True:
                 print("Dreiwegehahn ist bereits auf.")
-                sleep(1)
-                continue
+                
+                
             else:
                 dreiWegeAuf(hahnzeit)
                 hahnstatus_auf = True
                 print(f"Dreiwegehahn {hahnzeit} Sekunden auf")
-                continue
+                
         else:
             if hahnstatus_auf == True or hahnstatus_auf == None:
                 dreiWegeZu(hahnzeit)
                 hahnstatus_auf = False
                 print(f"Dreiwegehahn {hahnzeit} Sekunden zu")
-                continue
+                
             else:
                 hahnstatus_auf = False
                 print("Dreiwege ist bereits zu.") 
-                continue
+            
 
         if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
             if tBoiler < (sollTempBoiler - BoilerHysterese):
