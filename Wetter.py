@@ -44,7 +44,7 @@ class WetterThread(threading.Thread):
         global aussentemperatur
         while True:
             try:
-                aussentemperatur = holeAussentemperaturVomServer()
+                aussentemperatur = holeAussentemperaturVomServer() + 7   # + 7 Weil die Temp nicht stimmt zeigt immer zu kalt an 
             except WetterError as e:
                 sys.stderr.write(str(e) + "\n")
             sleep(600) # es reicht, die Aussentemperatur einmal pro 10 Minuten abzufragen
