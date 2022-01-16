@@ -112,7 +112,7 @@ while(True):
                         boiler_pumpe_aus()
                         print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
             if hahnstatus_auf == True:
-                if tPuffer > (sollTempBoiler + BoilerHysterese) and tPuffer < 80:
+                if tPuffer > (tBoiler + BoilerHysterese) and tPuffer < 80:
                     boiler_pumpe_an()
                     print("Boiler hat sollTemp erreicht, Puffer ist aber wörmer also Pumpe an!")
             else:
