@@ -27,6 +27,7 @@ def leseTemperatursensorEinmal(SENSOR):
         raise TemperatureSensorError("Temperatursensor nicht gefunden!")
     if lines[0][-3:] != "YES":
         raise TemperatureSensorError("Verbindung zum Temperatursensor verloren!")
+        time.sleep(10)                                                                  # Sleep weil die ganze Zeit Sensor verloren! wieder löschen wenn behoben.
     tempStringValue = lines[1].split(" ")[9][2:]
     if tempStringValue == "0":
         raise TemperatureSensorError("Vorlauf ist eingefroren: 0 Grad! Wers glaubt...")
