@@ -1,5 +1,5 @@
 
-TEMPERATUR_SENSOR_ID = '28-012032c50263' # Sensor, der aktuell in im Mischer verbaut ist   (alt 28-012032c8ffc3)
+TEMPERATUR_SENSOR_ID = '28-012032c50263' # Sensor, der aktuell in im Mischer verbaut ist   (alt 28-012032c8ffc3  )
 
 PUFFER_TEMPERATUR_SENSOR_ID = '28-012032d0cefb' # Temperatursensor im Solarpuffer
 BOILER_TEMPERATUR_SENSOR_ID = '28-012032c86187' # Temperatursensor im Warmwasserboiler (alt: 28-012032888753)
@@ -27,7 +27,6 @@ def leseTemperatursensorEinmal(SENSOR):
         raise TemperatureSensorError("Temperatursensor nicht gefunden!")
     if lines[0][-3:] != "YES":
         raise TemperatureSensorError("Verbindung zum Temperatursensor verloren!")
-        time.sleep(10)                                                                  # Sleep weil die ganze Zeit Sensor verloren! wieder löschen wenn behoben.
     tempStringValue = lines[1].split(" ")[9][2:]
     if tempStringValue == "0":
         raise TemperatureSensorError("Vorlauf ist eingefroren: 0 Grad! Wers glaubt...")
