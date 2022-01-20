@@ -1,6 +1,6 @@
 #####################################################################################################
 # Mischer Motor Steuerung
-REGELINTERVALL = 30 # nur alle % Sekunden, soll der Mischermotor angesteuert werden 
+REGELINTERVALL = 6 # nur alle % * Sleep(sekunden), soll der Mischermotor angesteuert werden (6*5=30sec) 
 MAX_REGELDIFFERENZ = 10.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
 HYSTERESE_VORLAUFTEMPERATUR = 0.8 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 STELLZEIT_PRO_KELVIN_TEMP_DIFF = 0.5; # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden?
