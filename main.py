@@ -15,7 +15,7 @@ PUFFERHYSTERESE = 6 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 #####################################################################################################
 # BoilerPumpe:
 BOILERINTERVALL = 60 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
-sollTempBoiler = 45 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
+sollTempBoiler = 43 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
 BoilerHysterese = 2 # Hysterese
 
 ######################################################################################################
