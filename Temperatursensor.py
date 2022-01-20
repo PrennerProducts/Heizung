@@ -71,8 +71,8 @@ class TemperaturSensor(threading.Thread):
                 puffertemperatur = leseTemperatursensorEinmal(PUFFER_TEMPERATUR_SENSOR_ID)
                 boilertemperatur = leseTemperatursensorEinmal(BOILER_TEMPERATUR_SENSOR_ID)
             except Exception as e:
-                sys.stderr.write(str(e) + ' - Sicherheitshalber nehmen wir 99.9 Grad an!\n')
-                vorlauftemperatur = 99.9 # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
+                sys.stderr.write(str(e) + ' - Sicherheitshalber nehmen wir 45 Grad an!\n')
+                vorlauftemperatur = 45 # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
                 buffertemperatur = 0     # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
                 boilertemperatur = 20  # Wenn die Temperatur nicht ermittelt werden kann, gehe vom Schlimmsten aus!
             sleep(1)
