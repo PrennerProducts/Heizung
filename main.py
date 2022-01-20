@@ -52,7 +52,7 @@ while(True):
 
     print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, f"tPuffer={tPuffer}", f"tBoiler={tBoiler}")
 
-    if Schleifenzaehler % REGELINTERVALL == 0: # Alle 10 Sekunden soll nachgeregelt werden
+    if Schleifenzaehler % REGELINTERVALL == 0: # Alle 30 Sekunden soll nachgeregelt werden
         tDeltaRegel = max(-MAX_REGELDIFFERENZ, min(tDelta, MAX_REGELDIFFERENZ)) # tDelta auf Regelbereich begrenzen
         if tDeltaRegel > HYSTERESE_VORLAUFTEMPERATUR:
             stellzeit = tDeltaRegel * STELLZEIT_PRO_KELVIN_TEMP_DIFF
@@ -120,4 +120,4 @@ while(True):
                 print("Boiler ist warm, Pumpe ist aus")
     
     Schleifenzaehler = Schleifenzaehler + 1
-    sleep(1)
+    sleep(5)
