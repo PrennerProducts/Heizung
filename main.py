@@ -10,13 +10,13 @@ SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 25.0
 ####################################################################################################
 # Solarpufferwaereme_in_Heizung
 PUFFERINTERVALL = 300 # nur alle %f Sekunden, soll der Dreiwegehahn angesteuert werden
-PUFFERHYSTERESE = 5 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
+PUFFERHYSTERESE = 6 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 
 #####################################################################################################
 # BoilerPumpe:
 BOILERINTERVALL = 60 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
-sollTempBoiler = 38 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
-BoilerHysterese = 6 # Hysterese
+sollTempBoiler = 45 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
+BoilerHysterese = 2 # Hysterese
 
 ######################################################################################################
 
@@ -111,7 +111,7 @@ while(True):
                     else:
                         boiler_pumpe_aus()
                         print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
-            if hahnstatus_auf == True:
+            elif hahnstatus_auf == True:
                 if tPuffer > (tBoiler + BoilerHysterese) and tPuffer < 80:
                     boiler_pumpe_an()
                     print("Boiler hat sollTemp erreicht, Puffer ist aber wörmer also Pumpe an!")

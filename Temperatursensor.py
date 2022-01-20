@@ -13,7 +13,7 @@ import sys
 from time import sleep
 
 class TemperatureSensorError(Exception):
-    pass
+    passcd
 
 """Startet die Temperaturmessung und gibt das Ergebnis zurueck.
 Die Funktion blockiert waehrend der Messung.

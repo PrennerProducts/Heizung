@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from Boiler_aufheizungs_pumpe import boiler_pumpe_an, boiler_pumpe_aus
 from time import sleep
 from Solarpufferwaereme_in_Heizung import dreiWegeAuf, dreiWegeZu
