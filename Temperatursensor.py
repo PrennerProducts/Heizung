@@ -1,9 +1,8 @@
 
 TEMPERATUR_SENSOR_ID = '28-012032c8ffc3' # Sensor, der aktuell in im Mischer verbaut ist   (alt 28-012032c50263  )
 
-PUFFER_TEMPERATUR_SENSOR_ID = '28-012032d0cefb' # Temperatursensor im Solarpuffer
-BOILER_TEMPERATUR_SENSOR_ID = '28-012032c86187' # Temperatursensor im Warmwasserboiler (alt: 28-012032888753)
-
+PUFFER_TEMPERATUR_SENSOR_ID = '28-012032d0cefb' # Temperatursensor im Solarpuffer (verbaut 28-012032d0cefb)
+BOILER_TEMPERATUR_SENSOR_ID = '28-012032c86187' # Temperatursensor im Warmwasserboiler (alt: 28-012032888753)(verbaut 28-012032c86187)
 vorlauftemperatur = 99.9 # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
 puffertemperatur = 10     # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
 boilertemperatur = 20  # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
@@ -13,7 +12,7 @@ import sys
 from time import sleep
 
 class TemperatureSensorError(Exception):
-    passcd
+    pass
 
 """Startet die Temperaturmessung und gibt das Ergebnis zurueck.
 Die Funktion blockiert waehrend der Messung.

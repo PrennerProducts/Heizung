@@ -1,1 +1,1 @@
-    GPIO.output(RELAIS_AUF_PIN, GPIO.HIGH) # Relais ist Low-Aktiv
+6583c57443ce6223b371b4d5ae8d9e34

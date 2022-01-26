@@ -17,7 +17,9 @@ class WetterError(Exception):
     pass
 
 def holeAussentemperaturVomServer():
-    url = "http://api.openweathermap.org/data/2.5/weather?q=Scharnitz&mode=xml&APPID=6583c57443ce6223b371b4d5ae8d9e34"
+    #url = "http://api.openweathermap.org/data/2.5/weather?q=Scharnitz&mode=xml&APPID=6583c57443ce6223b371b4d5ae8d9e34"
+    url = "http://api.openweathermap.org/data/2.5/weather?lat=47.389&lon=11.2646&mode=xml&appid=eb3f1e5b2063bcadbc3660dffe9767e3"
+    #url = "http://api.openweathermap.org/data/2.5/weather?lat={47.389}&lon={11.2646}&appid={eb3f1e5b2063bcadbc3660dffe9767e3}"
     #api.openweathermap.org/data/2.5/weather?q=Scharnitz&appid=6583c57443ce6223b371b4d5ae8d9e34
 
     try:
@@ -44,7 +46,7 @@ class WetterThread(threading.Thread):
         global aussentemperatur
         while True:
             try:
-                aussentemperatur = holeAussentemperaturVomServer() + 7   # + 7 Weil die Temp nicht stimmt zeigt immer zu kalt an 
+                aussentemperatur = holeAussentemperaturVomServer()   
             except WetterError as e:
                 sys.stderr.write(str(e) + "\n")
             sleep(600) # es reicht, die Aussentemperatur einmal pro 10 Minuten abzufragen
