@@ -100,10 +100,11 @@ while(True):
         # Oelbrenner Relais An/Aus
         if hahnstatus_auf == True:
             oelbrenner_aus()        # Wenn Wärme aus dem Puffer genutz wird, dann Oelbrenner AUS!
+            print("Oelbrenner ist AUS!")
             
         elif hahnstatus_auf == False:
             oelbrenner_an()         # Wenn Wärme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
-            
+            print("Oelbrenner ist AN")
 
         if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
             if tBoiler < (sollTempBoiler - BoilerHysterese):
