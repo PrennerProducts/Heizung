@@ -3,9 +3,9 @@
 REGELINTERVALL = 6 # nur alle % * Sleep(sekunden), soll der Mischermotor angesteuert werden (6*5=30sec) 
 MAX_REGELDIFFERENZ = 10.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
 HYSTERESE_VORLAUFTEMPERATUR = 0.8 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
-STELLZEIT_PRO_KELVIN_TEMP_DIFF = 0.5; # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden?
-SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 35.0
-SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 25.0
+STELLZEIT_PRO_KELVIN_TEMP_DIFF = 0.8; # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden?
+SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 34.0
+SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 24.0
 
 ####################################################################################################
 # Solarpufferwaereme_in_Heizung
@@ -27,6 +27,7 @@ from Mischer import mischerAuf, mischerZu
 import Wetter
 from Notabschaltung import TEMPERATUR_NOTABSCHALTUNG
 from Boiler_Aufheizungs_Pumpe import boiler_pumpe_an, boiler_pumpe_aus
+from oelbrenner import oelbrenner_an, oelbrenner_aus
 #####################################################################################################
 
 SOLL_VORLAUFTEMPERATUR_BEI_0_GRAD = (SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD + SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD) / 2.0
@@ -95,7 +96,13 @@ while(True):
                 
             else:
                 hahnstatus_auf = False
-                print("Dreiwege ist bereits zu.") 
+                print("Dreiwege ist bereits zu.")
+        # Oelbrenner Relais An/Aus
+        if hahnstatus_auf == True:
+            oelbrenner_aus()        # Wenn Wärme aus dem Puffer genutz wird, dann Oelbrenner AUS!
+            
+        elif hahnstatus_auf == False:
+            oelbrenner_an()         # Wenn Wärme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
             
 
         if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
