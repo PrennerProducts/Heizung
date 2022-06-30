@@ -2,12 +2,12 @@
 TEMPERATUR_SENSOR_ID = '28-012032c8ffc3' # Sensor, der aktuell in im Mischer verbaut ist   (alt 28-012032c50263  )
 
 PUFFER_TEMPERATUR_SENSOR_ID = '28-012032d0cefb' # Temperatursensor im Solarpuffer (verbaut 28-012032d0cefb)
-BOILER_TEMPERATUR_SENSOR_ID = '28-012032888753' # Temperatursensor im Warmwasserboiler (alt: 28-012032888753)(verbaut 28-012032c86187)
+BOILER_TEMPERATUR_SENSOR_ID = '28-012032c50263' # Temperatursensor im Warmwasserboiler (alt: 28-012032888753)(verbaut 28-012032c86187, 28-012032c50263)
 Heizraum_TEMPERATUR_SENSOR_ID = '28-012032c86187' # Temperatursensor Heizraumtemperatur
 vorlauftemperatur = 99.9 # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
 puffertemperatur = 10     # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
 boilertemperatur = 20  # der Wert wird von diesem Modul automatisch zyklisch gemessen und aktualisert
-
+ 
 import threading
 import sys
 from time import sleep
