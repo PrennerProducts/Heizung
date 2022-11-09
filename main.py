@@ -84,57 +84,70 @@ while(True):
     
 
     # Solarpufferwaerme_in_Heizung.py implementierung
-     
-    if Schleifenzaehler % PUFFERINTERVALL == 0: # alle PUFFERINTERWALL sekunden soll die Puffertemperatur kontrolliert werden und ggf der Dreiwegehahn geschalten werden.
-        if tPuffer >= (tSoll + PUFFERHYSTERESE):
-            if hahnstatus_auf == True:
-                print("Dreiwegehahn ist bereits auf.")
-                
-                
-            else:
-                dreiWegeAuf(hahnzeit)
-                hahnstatus_auf = True
-                print("Dreiwegehahn %.2f Sekunden auf" %hahnzeit)
-                
-        else:
-            if hahnstatus_auf == True or hahnstatus_auf == None:
-                dreiWegeZu(hahnzeit)
-                hahnstatus_auf = False
-                print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
-                
-            else:
-                hahnstatus_auf = False
-                print("Dreiwege ist bereits zu.")
-        # Oelbrenner Relais An/Aus
-        if hahnstatus_auf == True:
-            oelbrenner_aus()        # Wenn Waerme aus dem Puffer genutz wird, dann Oelbrenner AUS!
-            print("Oelbrenner ist AUS!")
-            
-        elif hahnstatus_auf == False:
-            oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
-            print("Oelbrenner ist AN")
-
-        if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
-            if tBoiler < (sollTempBoiler - BoilerHysterese):
-                if hahnstatus_auf == False:
-                    boiler_pumpe_an()
-                    print("Boilerpume ist an")
+    if tboiler >= (sollTempBoiler- BoilerHysterese):
+        print("Boiler ist Warm Normaler Modus") 
+        if Schleifenzaehler % PUFFERINTERVALL == 0: # alle PUFFERINTERWALL sekunden soll die Puffertemperatur kontrolliert werden und ggf der Dreiwegehahn geschalten werden.
+            if tPuffer >= (tSoll + PUFFERHYSTERESE):
                 if hahnstatus_auf == True:
-                    if (tPuffer) > (sollTempBoiler - BoilerHysterese) or (tPuffer > tBoiler +10) :
+                    print("Dreiwegehahn ist bereits auf.")
+                    
+                    
+                else:
+                    dreiWegeAuf(hahnzeit)
+                    hahnstatus_auf = True
+                    print("Dreiwegehahn %.2f Sekunden auf" %hahnzeit)
+                    
+            else:
+                if hahnstatus_auf == True or hahnstatus_auf == None:
+                    dreiWegeZu(hahnzeit)
+                    hahnstatus_auf = False
+                    print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
+                    
+                else:
+                    hahnstatus_auf = False
+                    print("Dreiwege ist bereits zu.")
+            # Oelbrenner Relais An/Aus
+            if hahnstatus_auf == True:
+                oelbrenner_aus()        # Wenn Waerme aus dem Puffer genutz wird, dann Oelbrenner AUS!
+                print("Oelbrenner ist AUS!")
+                
+            elif hahnstatus_auf == False:
+                oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
+                print("Oelbrenner ist AN")
+
+            if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
+                if tBoiler < (sollTempBoiler - BoilerHysterese):
+                    if hahnstatus_auf == False:
                         boiler_pumpe_an()
                         print("Boilerpume ist an")
+                    if hahnstatus_auf == True:
+                        if (tPuffer) > (sollTempBoiler - BoilerHysterese) or (tPuffer > tBoiler +10) :
+                            boiler_pumpe_an()
+                            print("Boilerpume ist an")
 
-                    else:
-                        boiler_pumpe_aus()
-                        print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
-            elif hahnstatus_auf == True:
-                if tPuffer > (tBoiler + BoilerHysterese+15):
-                    boiler_pumpe_an()
-                    print("Boiler hat sollTemp erreicht, Puffer ist aber waermer also Pumpe an!")
-            else:
-                boiler_pumpe_aus()
-                print("Boiler ist warm, Pumpe ist aus")
-    
+                        else:
+                            boiler_pumpe_aus()
+                            print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
+                elif hahnstatus_auf == True:
+                    if tPuffer > (tBoiler + BoilerHysterese+15):
+                        boiler_pumpe_an()
+                        print("Boiler hat sollTemp erreicht, Puffer ist aber waermer also Pumpe an!")
+                else:
+                    boiler_pumpe_aus()
+                    print("Boiler ist warm, Pumpe ist aus")
+    else:
+        print("Boiler ist kalt, Boiler Modus!")
+        if hahnstatus_auf == True or hahnstatus_auf == None:
+            dreiWegeZu(hahnzeit)
+            hahnstatus_auf = False
+            print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)            
+        else:
+            hahnstatus_auf = False
+            print("Dreiwege ist bereits zu.")
+            # Oelbrenner Relais An/Aus
+            oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
+            print("Oelbrenner ist AN")
+        
     Schleifenzaehler = Schleifenzaehler + 1
     sleep(30)
     
