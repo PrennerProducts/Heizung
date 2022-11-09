@@ -84,14 +84,13 @@ while(True):
     
 
     # Solarpufferwaerme_in_Heizung.py implementierung
-    if tboiler >= (sollTempBoiler- BoilerHysterese):
-        print("Boiler ist Warm Normaler Modus") 
+    if tBoiler >= (sollTempBoiler- BoilerHysterese):
+        if REGELINTERVALL == 1:
+            print("Boiler ist Warm Normaler Modus") 
         if Schleifenzaehler % PUFFERINTERVALL == 0: # alle PUFFERINTERWALL sekunden soll die Puffertemperatur kontrolliert werden und ggf der Dreiwegehahn geschalten werden.
             if tPuffer >= (tSoll + PUFFERHYSTERESE):
                 if hahnstatus_auf == True:
-                    print("Dreiwegehahn ist bereits auf.")
-                    
-                    
+                    print("Dreiwegehahn ist bereits auf.") 
                 else:
                     dreiWegeAuf(hahnzeit)
                     hahnstatus_auf = True
