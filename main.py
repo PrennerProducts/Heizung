@@ -143,11 +143,11 @@ while(True):
     def time_in_range(start, end, current):
         """Returns whether current is in the range [start, end]"""
         return start <= current <= end
+    
     start = datetime.time(5, 0, 0)
     end = datetime.time(5, 0, 45)
     current = datetime.datetime.now().time()
     
-
 
     if time_in_range(start, end, current):
         print("RebootTime: System Reboot NOW!")
