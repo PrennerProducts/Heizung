@@ -1,16 +1,15 @@
 #####################################################################################################
 # Mischer Motor Steuerung
-REGELINTERVALL = 10 # nur alle % * Sleep(sekunden), soll der Mischermotor angesteuert werden (6*5=30sec)
+REGELINTERVALL = 30 # nur alle % * Sleep(sekunden), soll der Mischermotor angesteuert werden (6*5=30sec)
 MAX_REGELDIFFERENZ = 15.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
-HYSTERESE_VORLAUFTEMPERATUR = 0.8 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
-STELLZEIT_PRO_KELVIN_TEMP_DIFF = 4.0 # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden?
-SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 34.0
-SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 25.0 
-
+HYSTERESE_VORLAUFTEMPERATUR = 0.5 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
+STELLZEIT_PRO_KELVIN_TEMP_DIFF = 20.0 # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden? alt 4
+SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 32.0 #34
+SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 24.0
 ####################################################################################################
 # Solarpufferwaereme_in_Heizung
 PUFFERINTERVALL = 300 # nur alle %f Sekunden, soll der Dreiwegehahn angesteuert werden
-PUFFERHYSTERESE = 7 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird alt 7
+PUFFERHYSTERESE =  7 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wird alt 7
 
 #####################################################################################################
 # BoilerPumpe:
@@ -27,7 +26,7 @@ from Mischer import mischerAuf, mischerZu
 import Wetter
 from Notabschaltung import TEMPERATUR_NOTABSCHALTUNG
 from Boiler_Aufheizungs_Pumpe import boiler_pumpe_an, boiler_pumpe_aus
-from oelbrenner import oelbrenner_an, oelbrenner_aus
+from oelbrenner import oelbrenner_an, oelbrenner_aus, vorlaufpumpe_an, vorlaufpumpe_aus
 #####################################################################################################
 
 SOLL_VORLAUFTEMPERATUR_BEI_0_GRAD = (SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD + SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD) / 2.0
@@ -42,6 +41,10 @@ hahnzeit = 125 # Sekunden die von Hahn bentoeigt werden, um die Stellung zu wech
 hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None
 
 sleep(5) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
+
+
+vorlaufpumpe_an()
+
 
 while(True):
     tAussen = Wetter.aussentemperatur
@@ -112,7 +115,7 @@ while(True):
                     boiler_pumpe_an()
                     print("Boilerpume ist an")
                 if hahnstatus_auf == True:
-                    if (tPuffer) > (sollTempBoiler - BoilerHysterese):
+                    if (tPuffer) > (sollTempBoiler - BoilerHysterese) or (tPuffer > tBoiler +10) :
                         boiler_pumpe_an()
                         print("Boilerpume ist an")
 
@@ -120,7 +123,7 @@ while(True):
                         boiler_pumpe_aus()
                         print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
             elif hahnstatus_auf == True:
-                if tPuffer > (tBoiler + BoilerHysterese) and tPuffer < 80:
+                if tPuffer > (tBoiler + BoilerHysterese+15):
                     boiler_pumpe_an()
                     print("Boiler hat sollTemp erreicht, Puffer ist aber waermer also Pumpe an!")
             else:
