@@ -18,7 +18,9 @@ sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden 
 BoilerHysterese = 2 # Hysterese 
 
 ######################################################################################################
+import os
 import time
+import datetime
 from time import sleep
 from Solarpufferwaereme_in_Heizung import dreiWegeAuf, dreiWegeZu
 import Temperatursensor
@@ -53,15 +55,12 @@ while(True):
     tDelta = tIst - tSoll
     tPuffer = Temperatursensor.puffertemperatur
     tBoiler = Temperatursensor.boilertemperatur
-    
 
-    
-    currentTime = time.asctime(time.localtime(time.time()))
 
     #print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, f"tPuffer={tPuffer}", f"tBoiler={tBoiler}", time.strftime('%H:%M', time.localtime()))
-    #print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
-    print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', currentTime))
-    print(f"My Time: {currentTime} ")
+    print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
+    
+
     if Schleifenzaehler % REGELINTERVALL == 0: # Alle 30 Sekunden soll nachgeregelt werden
         tDeltaRegel = max(-MAX_REGELDIFFERENZ, min(tDelta, MAX_REGELDIFFERENZ)) # tDelta auf Regelbereich begrenzen
         if tDeltaRegel > HYSTERESE_VORLAUFTEMPERATUR:
@@ -139,6 +138,23 @@ while(True):
     Schleifenzaehler = Schleifenzaehler + 1
     sleep(30)
     
+    # Check if RestartTime 5:00
+    
+    def time_in_range(start, end, current):
+        """Returns whether current is in the range [start, end]"""
+        return start <= current <= end
+    start = datetime.time(5, 0, 0)
+    end = datetime.time(5, 0, 45)
+    current = datetime.datetime.now().time()
+    
+
+
+    if time_in_range(start, end, current):
+        print("RebootTime: System Reboot NOW!")
+        break
+    
 vorlaufpumpe_aus()
 
+
+os.system("sudo shutdown -r 0 ")
 
