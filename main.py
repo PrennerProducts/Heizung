@@ -138,6 +138,7 @@ while(True):
                 print("Boiler ist warm, Pumpe ist aus")
     else:
         while(1):
+            tBoiler = Temperatursensor.boilertemperatur
             print("Boiler ist kalt, Boiler Modus! while(1)")
             #vorlaufpumpe_aus()
             if hahnstatus_auf == True or hahnstatus_auf == None:
@@ -150,10 +151,13 @@ while(True):
                 # Oelbrenner Relais An/Aus
                 oelbrenner_an()         
                 print("Oelbrenner ist AN")
+            
                 
             if tBoiler == sollTempBoiler:
                 break
+            
             sleep(60)
+            
         
     Schleifenzaehler = Schleifenzaehler + 1
     sleep(30)
