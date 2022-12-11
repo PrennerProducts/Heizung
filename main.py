@@ -1,9 +1,10 @@
+#!/usr/bin/python3.7
 #####################################################################################################
 # Mischer Motor Steuerung
 REGELINTERVALL = 30 # nur alle % * Sleep(sekunden), soll der Mischermotor angesteuert werden (6*5=30sec)
 MAX_REGELDIFFERENZ = 15.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
 HYSTERESE_VORLAUFTEMPERATUR = 0.5 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
-STELLZEIT_PRO_KELVIN_TEMP_DIFF = 20.0 # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall angesteuert werden? alt 4
+STELLZEIT_PRO_KELVIN_TEMP_DIFF = 20.0 # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall anfgesteuert werden? alt 4
 SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 32.0 #34
 SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 24.0
 ####################################################################################################
@@ -15,7 +16,7 @@ PUFFERHYSTERESE =  7 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wir
 # BoilerPumpe:
 BOILERINTERVALL = 60 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
 sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
-BoilerHysterese = 1 # Hysterese 
+BoilerHysterese = 2 # Hysterese 
 
 ######################################################################################################
 import os
@@ -44,7 +45,8 @@ hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None
 
 sleep(5) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
 
-vorlaufpumpe_an()
+
+#vorlaufpumpe_an()
 
 
 while(True):
@@ -65,12 +67,10 @@ while(True):
         if tDeltaRegel > HYSTERESE_VORLAUFTEMPERATUR:
             stellzeit = tDeltaRegel * STELLZEIT_PRO_KELVIN_TEMP_DIFF
             mischerZu(stellzeit)
-            hahnstatus_auf = False
             print("Mischer {0:.1f} Sekunden zu.".format(stellzeit))
         elif tDeltaRegel < -HYSTERESE_VORLAUFTEMPERATUR:
             stellzeit = -tDeltaRegel * STELLZEIT_PRO_KELVIN_TEMP_DIFF
             mischerAuf(stellzeit)
-            hahnstatus_auf = True
             print("Mischer {0:.1f} Sekunden auf.".format(stellzeit))
 
         # Historie
@@ -86,8 +86,8 @@ while(True):
 
     # Solarpufferwaerme_in_Heizung.py implementierung
     if tBoiler >= (sollTempBoiler- BoilerHysterese):
-        if REGELINTERVALL == 1:
-            print("Boiler ist Warm") 
+        if Schleifenzaehler % REGELINTERVALL == 1:
+            print("Boiler ist Warm Normaler Modus") 
         if Schleifenzaehler % PUFFERINTERVALL == 0: # alle PUFFERINTERWALL sekunden soll die Puffertemperatur kontrolliert werden und ggf der Dreiwegehahn geschalten werden.
             if tPuffer >= (tSoll + PUFFERHYSTERESE):
                 if hahnstatus_auf == True:
@@ -115,43 +115,45 @@ while(True):
                 oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
                 print("Oelbrenner ist AN")
 
-            if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
-                if tBoiler < (sollTempBoiler - BoilerHysterese):
-                    if hahnstatus_auf == False:
+            #if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
+            if tBoiler < (sollTempBoiler):
+                if hahnstatus_auf == False or hahnstatus_auf == None:
+                    boiler_pumpe_an()
+                    hahnstatus_auf = False
+                    print("Boilerpume ist an")
+                if hahnstatus_auf == True:
+                    if (tPuffer) > (sollTempBoiler + 10) or (tPuffer > tBoiler +10) :
                         boiler_pumpe_an()
                         print("Boilerpume ist an")
-                    if hahnstatus_auf == True:
-                        if (tPuffer) > (sollTempBoiler - BoilerHysterese) or (tPuffer > tBoiler +10) :
-                            boiler_pumpe_an()
-                            print("Boilerpume ist an")
 
-                        else:
-                            boiler_pumpe_aus()
-                            print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
-                elif hahnstatus_auf == True:
-                    if tPuffer > (tBoiler + BoilerHysterese+15):
-                        boiler_pumpe_an()
-                        print("Boiler hat sollTemp erreicht, Puffer ist aber waermer also Pumpe an!")
-                else:
-                    boiler_pumpe_aus()
-                    print("Boiler ist warm, Pumpe ist aus")
+                    else:
+                        boiler_pumpe_aus()
+                        print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
+            elif hahnstatus_auf == True:
+                if tPuffer > (tBoiler + BoilerHysterese+15):
+                    boiler_pumpe_an()
+                    print("Boiler hat sollTemp erreicht, Puffer ist aber waermer also Pumpe an!")
+            else:
+                boiler_pumpe_aus()
+                print("Boiler ist warm, Pumpe ist aus")
     else:
-        print("Boiler ist kalt, Boiler Modus!")
-        if hahnstatus_auf == True:
-            dreiWegeZu(hahnzeit)
-            hahnstatus_auf = False
-            print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)            
-        elif hahnstatus_auf == None:
-            dreiWegeZu(hahnzeit)
-            hahnstatus_auf = False
-            oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
-            print("Oelbrenner ist AN")
-        else:
-            hahnstatus_auf = False
-            print("Dreiwege ist bereits zu .")
-            # Oelbrenner Relais An/Aus
-            oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
-            print("Oelbrenner ist AN")
+        while(1):
+            print("Boiler ist kalt, Boiler Modus! while(1)")
+            #vorlaufpumpe_aus()
+            if hahnstatus_auf == True or hahnstatus_auf == None:
+                dreiWegeZu(hahnzeit)
+                hahnstatus_auf = False
+                print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)            
+            else:
+                hahnstatus_auf = False
+                print("Letz's heat the fucking Boiler!  tBoiler=%.2f" %tBoiler)
+                # Oelbrenner Relais An/Aus
+                oelbrenner_an()         
+                print("Oelbrenner ist AN")
+                
+            if tBoiler == sollTempBoiler:
+                break
+            sleep(60)
         
     Schleifenzaehler = Schleifenzaehler + 1
     sleep(30)
@@ -171,7 +173,7 @@ while(True):
         print("RebootTime: System Reboot NOW!")
         break
     
-vorlaufpumpe_aus()
+
 
 
 os.system("sudo shutdown -r 0 ")
