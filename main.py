@@ -15,7 +15,7 @@ PUFFERHYSTERESE =  7 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wir
 # BoilerPumpe:
 BOILERINTERVALL = 60 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
 sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
-BoilerHysterese = 2 # Hysterese 
+BoilerHysterese = 1 # Hysterese 
 
 ######################################################################################################
 import os
@@ -44,7 +44,6 @@ hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None
 
 sleep(5) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
 
-
 vorlaufpumpe_an()
 
 
@@ -66,10 +65,12 @@ while(True):
         if tDeltaRegel > HYSTERESE_VORLAUFTEMPERATUR:
             stellzeit = tDeltaRegel * STELLZEIT_PRO_KELVIN_TEMP_DIFF
             mischerZu(stellzeit)
+            hahnstatus_auf = False
             print("Mischer {0:.1f} Sekunden zu.".format(stellzeit))
         elif tDeltaRegel < -HYSTERESE_VORLAUFTEMPERATUR:
             stellzeit = -tDeltaRegel * STELLZEIT_PRO_KELVIN_TEMP_DIFF
             mischerAuf(stellzeit)
+            hahnstatus_auf = True
             print("Mischer {0:.1f} Sekunden auf.".format(stellzeit))
 
         # Historie
@@ -86,7 +87,7 @@ while(True):
     # Solarpufferwaerme_in_Heizung.py implementierung
     if tBoiler >= (sollTempBoiler- BoilerHysterese):
         if REGELINTERVALL == 1:
-            print("Boiler ist Warm Normaler Modus") 
+            print("Boiler ist Warm") 
         if Schleifenzaehler % PUFFERINTERVALL == 0: # alle PUFFERINTERWALL sekunden soll die Puffertemperatur kontrolliert werden und ggf der Dreiwegehahn geschalten werden.
             if tPuffer >= (tSoll + PUFFERHYSTERESE):
                 if hahnstatus_auf == True:
@@ -136,13 +137,18 @@ while(True):
                     print("Boiler ist warm, Pumpe ist aus")
     else:
         print("Boiler ist kalt, Boiler Modus!")
-        if hahnstatus_auf == True or hahnstatus_auf == None:
+        if hahnstatus_auf == True:
             dreiWegeZu(hahnzeit)
             hahnstatus_auf = False
             print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)            
+        elif hahnstatus_auf == None:
+            dreiWegeZu(hahnzeit)
+            hahnstatus_auf = False
+            oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
+            print("Oelbrenner ist AN")
         else:
             hahnstatus_auf = False
-            print("Dreiwege ist bereits zu.")
+            print("Dreiwege ist bereits zu .")
             # Oelbrenner Relais An/Aus
             oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
             print("Oelbrenner ist AN")
