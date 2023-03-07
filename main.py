@@ -140,6 +140,7 @@ while(True):
     else:
         tempcount = 0
         while(1):
+            tBoiler = Temperatursensor.boilertemperatur
             print("Boiler ist kalt, Boiler Modus! while(1)")
             #vorlaufpumpe_aus()
             if  tPuffer <= 45:

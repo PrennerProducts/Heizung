@@ -26,6 +26,7 @@ def mischerAuf(sekunden):
     global mischerSekundenZu
     if mischerSekundenZu == 0:
         mischerSekundenAuf = max(mischerSekundenAuf, sekunden)
+    
 
 """
 Signalisiet dem Mischer Thread, dass der Mischermotor fuer die gegebene Anzahl Sekunden in richtung Zu drehen soll.
