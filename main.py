@@ -139,15 +139,17 @@ while(True):
                 print("Boiler ist warm, Pumpe ist aus")
     else:
         tempcount = 0
-        while(1):
+        while(True):
             tBoiler = Temperatursensor.boilertemperatur
             print("Boiler ist kalt, Boiler Modus! while(1)")
-            #vorlaufpumpe_aus()
+            vorlaufpumpe_an()
+            print("Vorlaufpumpe ist an")
             if  tPuffer <= 45:
-                dreiWegeZu(hahnzeit)
-                hahnstatus_auf = False
-                print("Puffer ist kalt, heize mit ÖL")
-                print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
+                if hahnstatus_auf == True or hahnstatus_auf == None
+                    dreiWegeZu(hahnzeit)
+                    hahnstatus_auf = False
+                    print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
+                print("Puffer ist kalt, heize mit ÖL") 
                  # Oelbrenner Relais An/Aus
                 oelbrenner_an()
                 print("Oelbrenner ist AN")
@@ -157,17 +159,20 @@ while(True):
                 print("Dreiwegehahn %.2f Sekunden AUF" %hahnzeit)
                 oelbrenner_aus()
                 print('Oelbrenner aus !!!!')
-            else:
-                hahnstatus_auf = True
-                print("Letz's heat the fucking Boiler!  tBoiler=%.2f with SOlar" %tBoiler)
-               
-
+                
             if tBoiler == sollTempBoiler:
                 break
             tempcount +=1
             sleep(60)
             if tempcount == 10:
                 break
+            
+            else:
+                hahnstatus_auf = True
+                print("Letz's heat the fucking Boiler!  tBoiler=%.2f with SOlar" %tBoiler)
+               
+
+            
 
     Schleifenzaehler = Schleifenzaehler + 1
     sleep(30)
