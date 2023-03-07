@@ -145,7 +145,7 @@ while(True):
             vorlaufpumpe_an()
             print("Vorlaufpumpe ist an")
             if  tPuffer <= 45:
-                if hahnstatus_auf == True or hahnstatus_auf == None
+                if hahnstatus_auf == True or hahnstatus_auf == None:
                     dreiWegeZu(hahnzeit)
                     hahnstatus_auf = False
                     print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
