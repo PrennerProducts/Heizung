@@ -4,9 +4,9 @@
 REGELINTERVALL = 30 # nur alle % * Sleep(sekunden), soll der Mischermotor angesteuert werden (6*5=30sec)
 MAX_REGELDIFFERENZ = 15.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
 HYSTERESE_VORLAUFTEMPERATUR = 0.5 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
-STELLZEIT_PRO_KELVIN_TEMP_DIFF = 10.0 # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall anfgesteuert werden? alt 4
+STELLZEIT_PRO_KELVIN_TEMP_DIFF = 20.0 # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall anfgesteuert werden? alt 4
 SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 36.0 #34
-SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 25.0
+SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 26.0
 ####################################################################################################
 # Solarpufferwaereme_in_Heizung
 PUFFERINTERVALL = 300 # nur alle %f Sekunden, soll der Dreiwegehahn angesteuert werden
@@ -15,7 +15,7 @@ PUFFERHYSTERESE =  7 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wir
 #####################################################################################################
 # BoilerPumpe:
 BOILERINTERVALL = 60 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
-sollTempBoiler = 43 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
+sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
 BoilerHysterese = 2 # Hysterese
 
 ######################################################################################################
@@ -142,15 +142,17 @@ while(True):
         while(1):
             print("Boiler ist kalt, Boiler Modus! while(1)")
             #vorlaufpumpe_aus()
-            if  tPuffer <= 45:
-                dreiWegeZu(hahnzeit)
+            boiler_pumpe_an()
+            if  tPuffer <= 44:
+                
+dreiWegeZu(hahnzeit)
                 hahnstatus_auf = False
                 print("Puffer ist kalt, heize mit ÖL")
                 print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
                  # Oelbrenner Relais An/Aus
                 oelbrenner_an()
                 print("Oelbrenner ist AN")
-            elif tPuffer > 45 and hahnstatus_auf == False or tPuffer > 46 and hahnstatus_auf == None:
+            elif tPuffer > 44 and hahnstatus_auf == False or tPuffer > 46 and hahnstatus_auf == None:
                 dreiWegeAuf(hahnzeit)
                 hahnstatus_auf = True
                 print("Dreiwegehahn %.2f Sekunden AUF" %hahnzeit)
