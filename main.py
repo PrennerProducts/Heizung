@@ -88,6 +88,7 @@ while(True):
     if tBoiler >= (sollTempBoiler- BoilerHysterese):
         if Schleifenzaehler % REGELINTERVALL == 1:
             print("Boiler ist Warm Normaler Modus")
+            boiler_pumpe_aus()
         if Schleifenzaehler % PUFFERINTERVALL == 0: # alle PUFFERINTERWALL sekunden soll die Puffertemperatur kontrolliert werden und ggf der Dreiwegehahn geschalten werden.
             if tPuffer >= (tSoll + PUFFERHYSTERESE):
                 if hahnstatus_auf == True:
