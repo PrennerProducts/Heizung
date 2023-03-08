@@ -140,12 +140,15 @@ while(True):
                 print("Boiler ist warm, Pumpe ist aus")
     else:
         tempcount = 0
+        sleeptime = 300
         while(True):
             tBoiler = Temperatursensor.boilertemperatur
-            print("Boiler ist kalt, Boiler Modus! while(1)")
+            print("Boiler ist kalt, Boiler Modus! while(True)")
             vorlaufpumpe_an()
             print("Vorlaufpumpe ist an")
-            if  tPuffer <= 45:
+            if tempcount >= 12:
+                break
+            elif  tPuffer <= sollTempBoiler:
                 if hahnstatus_auf == True or hahnstatus_auf == None:
                     dreiWegeZu(hahnzeit)
                     hahnstatus_auf = False
@@ -154,28 +157,30 @@ while(True):
                  # Oelbrenner Relais An/Aus
                 oelbrenner_an()
                 print("Oelbrenner ist AN")
+                sleep(sleeptime)
+                tempcount +=1
+                print("10 Min heizen mit oel, neue Temperatur: tBoiler=%.2f tPuffer:%.2f" %tBoiler %tPuffer)
             elif tPuffer > 45 and hahnstatus_auf == False or tPuffer > 46 and hahnstatus_auf == None:
                 dreiWegeAuf(hahnzeit)
                 hahnstatus_auf = True
                 print("Dreiwegehahn %.2f Sekunden AUF" %hahnzeit)
                 oelbrenner_aus()
                 print('Oelbrenner aus !!!!')
+                sleep(sleeptime)
+                tempcount +=1
+                print("10 Min heizen mit Solar, neue Temperatur: tBoiler=%.2f tPuffer:%.2f" %tBoiler %tPuffer)
                 
-            if tBoiler == sollTempBoiler:
-                break
-            tempcount +=1
-            sleep(60)
-            if tempcount == 10:
+            elif tBoiler >= sollTempBoiler:
                 break
             
             else:
                 hahnstatus_auf = True
-                print("Letz's heat the fucking Boiler!  tBoiler=%.2f with SOlar" %tBoiler)
+                print("Letz's heat the fucking Boiler!  tBoiler=%.2f tPuffer:%.2f" %tBoiler %tPuffer)
                
 
             
 
-    Schleifenzaehler = Schleifenzaehler + 1
+    Schleifenzaehler =+ 1
     sleep(30)
 
     # Check if RestartTime 5:00
