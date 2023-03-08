@@ -159,7 +159,8 @@ while(True):
                 print("Oelbrenner ist AN")
                 sleep(sleeptime)
                 tempcount +=1
-                print("10 Min heizen mit oel, neue Temperatur: tBoiler=%.2f tPuffer:%.2f" %tBoiler %tPuffer)
+                print("10 Min heizen mit oel, neue Temperatur: tBoiler=%.2f" %tBoiler)
+                print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
             elif tPuffer > 45 and hahnstatus_auf == False or tPuffer > 46 and hahnstatus_auf == None:
                 dreiWegeAuf(hahnzeit)
                 hahnstatus_auf = True
@@ -168,7 +169,8 @@ while(True):
                 print('Oelbrenner aus !!!!')
                 sleep(sleeptime)
                 tempcount +=1
-                print("10 Min heizen mit Solar, neue Temperatur: tBoiler=%.2f tPuffer:%.2f" %tBoiler %tPuffer)
+                print("10 Min heizen mit Solar, neue Temperatur: tBoiler=%.2f" %tBoiler)
+                print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
                 
             elif tBoiler >= sollTempBoiler:
                 break
