@@ -1,7 +1,7 @@
 #!/usr/bin/python3.7
 #####################################################################################################
 # Mischer Motor Steuerung
-REGELINTERVALL = 2 # nur alle % Minuten, soll der Mischermotor angesteuert werden (6*5=30sec)
+REGELINTERVALL = 5 # nur alle % Minuten, soll der Mischermotor angesteuert werden (6*5=30sec)
 MAX_REGELDIFFERENZ = 10.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
 HYSTERESE_VORLAUFTEMPERATUR = 0.5 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 STELLZEIT_PRO_KELVIN_TEMP_DIFF = 10.0 # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall anfgesteuert werden? alt 4
@@ -9,12 +9,12 @@ SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 36.0 #34
 SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 25.0
 ####################################################################################################
 # Solarpufferwaereme_in_Heizung
-PUFFERINTERVALL = 5 # nur alle %f Sekunden, soll der Dreiwegehahn angesteuert werden
+PUFFERINTERVALL = 10 # nur alle %f Minuten, soll der Dreiwegehahn angesteuert werden
 PUFFERHYSTERESE =  5 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wird alt 7
 
 #####################################################################################################
 # BoilerPumpe:
-BOILERINTERVALL = 30 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
+BOILERINTERVALL = 10 # nur alle %f Minuten sollte die Pumpe an oder aus geschalten werden
 sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
 BoilerHysterese = 2 # Hysterese
 
@@ -41,7 +41,7 @@ historieString = ""
 Schleifenzaehler = 0
 
 hahnzeit = 125 # Sekunden die von Hahn bentoeigt werden, um die Stellung zu wechseln
-hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None
+hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None da die letze stellung unbekannt ist
 
 sleep(5) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
 
@@ -123,13 +123,17 @@ while(True):
                 boiler_pumpe_an()
                 dreiWegeZu(hahnzeit)
                 hahnstatus_auf = False
+                oelbrenner_an()
                 print("Boilerpume ist an")
                 print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
+                print("Ölbrenner ist an!")
             if hahnstatus_auf == False:
                 boiler_pumpe_an()
+                oelbrenner_an()
                 hahnstatus_auf = False
                 print("Boilerpume ist an")
                 print("Dreiwegehahn ist zu")
+                print("Ölbrenner ist an!")
             if hahnstatus_auf == True:
                 if (tPuffer) > (sollTempBoiler + 5):
                     boiler_pumpe_an()
@@ -137,7 +141,7 @@ while(True):
 
                 else:
                     boiler_pumpe_aus()
-                    print("ACHTUNG: Hahnstatus ist auf, aber Puffer ist kalt, Pumpe ist aus! KONTROLLE!!!!! ACHTUNG!!!!")
+                    print("ACHTUNG: Hahnstatus ist auf, aber Boiler ist kalt, Pumpe ist aus! KONTROLLE!!!!! ACHTUNG!!!!")
         
         else:
             boiler_pumpe_aus()
