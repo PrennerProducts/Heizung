@@ -14,7 +14,7 @@ PUFFERHYSTERESE =  5 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wir
 
 #####################################################################################################
 # BoilerPumpe:
-BOILERINTERVALL = 1 # nur alle %f Minuten sollte die Pumpe an oder aus geschalten werden
+BOILERINTERVALL = 10 # nur alle %f Minuten sollte die Pumpe an oder aus geschalten werden
 sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
 BoilerHysterese = 2 # Hysterese
 
@@ -64,7 +64,7 @@ while(True):
 
     #print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, f"tPuffer={tPuffer}", f"tBoiler={tBoiler}", time.strftime('%H:%M', time.localtime()))
     print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
-    logging.info(f"tAussen={tAussen} tSoll={tSoll} tIst={tIst} tDelta={tDelta} tPuffer={tPuffer} tBoiler={tBoiler}")
+    #logging.info(f"tAussen={tAussen} tSoll={tSoll} tIst={tIst} tDelta={tDelta} tPuffer={tPuffer} tBoiler={tBoiler}")
     mystring = '%s' %"tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime())
     logging.info(mystring)
     
