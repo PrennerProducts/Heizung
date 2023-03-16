@@ -1,21 +1,21 @@
 #!/usr/bin/python3.7
 #####################################################################################################
 # Mischer Motor Steuerung
-REGELINTERVALL = 30 # nur alle % * Sleep(sekunden), soll der Mischermotor angesteuert werden (6*5=30sec)
-MAX_REGELDIFFERENZ = 15.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
+REGELINTERVALL = 2 # nur alle % Minuten, soll der Mischermotor angesteuert werden (6*5=30sec)
+MAX_REGELDIFFERENZ = 10.0 # Nur maximal 10 Grad Regelabweichung werden beruecksichtigt, damit der Regler nicht zu agressiv regelt
 HYSTERESE_VORLAUFTEMPERATUR = 0.5 # Temperaturbereich, innerhalb dem nicht nachgeregelt wird
 STELLZEIT_PRO_KELVIN_TEMP_DIFF = 10.0 # Wie viele Sekunden soll der Mischermotor pro Kelvin Temperaturabweichung und Regelintervall anfgesteuert werden? alt 4
 SOLL_VORLAUFTEMPERATUR_BEI_MINUS_10_GRAD = 36.0 #34
 SOLL_VORLAUFTEMPERATUR_BEI_PLUS_10_GRAD = 25.0
 ####################################################################################################
 # Solarpufferwaereme_in_Heizung
-PUFFERINTERVALL = 300 # nur alle %f Sekunden, soll der Dreiwegehahn angesteuert werden
-PUFFERHYSTERESE =  7 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wird alt 7
+PUFFERINTERVALL = 5 # nur alle %f Sekunden, soll der Dreiwegehahn angesteuert werden
+PUFFERHYSTERESE =  5 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wird alt 7
 
 #####################################################################################################
 # BoilerPumpe:
-BOILERINTERVALL = 60 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
-sollTempBoiler = 43 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
+BOILERINTERVALL = 30 # nur alle %f Sekunden sollte die Pumpe an oder aus geschalten werden
+sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
 BoilerHysterese = 2 # Hysterese
 
 ######################################################################################################
@@ -46,7 +46,7 @@ hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None
 sleep(5) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
 
 
-#vorlaufpumpe_an()
+#vorlaufpumpe_an()  # Vorlaufpumpe nun dauerhaft an
 
 
 while(True):
@@ -115,75 +115,83 @@ while(True):
             elif hahnstatus_auf == False:
                 oelbrenner_an()         # Wenn Waerme NICHT aus dem Puffer genutz wird, dann Oelbrenner AN!
                 print("Oelbrenner ist AN")
-
-            #if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
-            if tBoiler < (sollTempBoiler):
-                if hahnstatus_auf == False or hahnstatus_auf == None:
+               
+    if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
+        print("Boilerintervall kontrolliere Boilertemp=%.2f" %tBoiler)
+        if tBoiler < (sollTempBoiler):
+            if hahnstatus_auf == None:
+                boiler_pumpe_an()
+                dreiWegeZu(hahnzeit)
+                hahnstatus_auf = False
+                print("Boilerpume ist an")
+                print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
+            if hahnstatus_auf == False:
+                boiler_pumpe_an()
+                hahnstatus_auf = False
+                print("Boilerpume ist an")
+                print("Dreiwegehahn ist zu")
+            if hahnstatus_auf == True:
+                if (tPuffer) > (sollTempBoiler + 5):
                     boiler_pumpe_an()
-                    hahnstatus_auf = False
-                    print("Boilerpume ist an")
-                if hahnstatus_auf == True:
-                    if (tPuffer) > (sollTempBoiler + 10) or (tPuffer > tBoiler +10) :
-                        boiler_pumpe_an()
-                        print("Boilerpume ist an")
+                    print("Boilerpume ist an, heize Boiler mit SolarPuffer")
 
-                    else:
-                        boiler_pumpe_aus()
-                        
-                        print("Boiler nicht Warm aber trotzdem Boilerpumpe aus")
-            elif hahnstatus_auf == True:
-                if tPuffer > (tBoiler + BoilerHysterese+15):
-                    boiler_pumpe_an()
-                    print("Boiler hat sollTemp erreicht, Puffer ist aber waermer also Pumpe an!")
-            else:
-                boiler_pumpe_aus()
-                print("Boiler ist warm, Pumpe ist aus")
-    else:
-        tempcount = 0
-        sleeptime = 300
-        while(True):
-            tBoiler = Temperatursensor.boilertemperatur
-            print("Boiler ist kalt, Boiler Modus! while(True)")
-            vorlaufpumpe_an()
-            print("Vorlaufpumpe ist an")
-            if tempcount >= 12:
-                break
-            elif  tPuffer <= sollTempBoiler:
-                if hahnstatus_auf == True or hahnstatus_auf == None:
-                    dreiWegeZu(hahnzeit)
-                    hahnstatus_auf = False
-                    print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
-                print("Puffer ist kalt, heize mit ÖL") 
-                 # Oelbrenner Relais An/Aus
-                oelbrenner_an()
-                print("Oelbrenner ist AN")
-                sleep(sleeptime)
-                tempcount +=1
-                print("10 Min heizen mit oel, neue Temperatur: tBoiler=%.2f" %tBoiler)
-                print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
-            elif tPuffer > 45 and hahnstatus_auf == False or tPuffer > 46 and hahnstatus_auf == None:
-                dreiWegeAuf(hahnzeit)
-                hahnstatus_auf = True
-                print("Dreiwegehahn %.2f Sekunden AUF" %hahnzeit)
-                oelbrenner_aus()
-                print('Oelbrenner aus !!!!')
-                sleep(sleeptime)
-                tempcount +=1
-                print("10 Min heizen mit Solar, neue Temperatur: tBoiler=%.2f" %tBoiler)
-                print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
+                else:
+                    boiler_pumpe_aus()
+                    print("ACHTUNG: Hahnstatus ist auf, aber Puffer ist kalt, Pumpe ist aus! KONTROLLE!!!!! ACHTUNG!!!!")
+        
+        else:
+            boiler_pumpe_aus()
+            print("Boiler ist warm, Pumpe ist aus")
+    
+    
+    
+    #Opsolete Notfalllösung zum heizen des Bilers im Fehlerfall
+    # else:
+    #     tempcount = 0
+    #     sleeptime = 300
+    #     while(True):
+    #         tBoiler = Temperatursensor.boilertemperatur
+    #         print("Boiler ist kalt, Boiler Modus! while(True)")
+    #         vorlaufpumpe_an()
+    #         print("Vorlaufpumpe ist an")
+    #         if tempcount >= 12:
+    #             break
+    #         elif  tPuffer <= sollTempBoiler:
+    #             if hahnstatus_auf == True or hahnstatus_auf == None:
+    #                 dreiWegeZu(hahnzeit)
+    #                 hahnstatus_auf = False
+    #                 print("Dreiwegehahn %.2f Sekunden zu" %hahnzeit)
+    #             print("Puffer ist kalt, heize mit ÖL") 
+    #              # Oelbrenner Relais An/Aus
+    #             oelbrenner_an()
+    #             print("Oelbrenner ist AN")
+    #             sleep(sleeptime)
+    #             tempcount +=1
+    #             print("10 Min heizen mit oel, neue Temperatur: tBoiler=%.2f" %tBoiler)
+    #             print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
+    #         elif tPuffer > 45 and hahnstatus_auf == False or tPuffer > 46 and hahnstatus_auf == None:
+    #             dreiWegeAuf(hahnzeit)
+    #             hahnstatus_auf = True
+    #             print("Dreiwegehahn %.2f Sekunden AUF" %hahnzeit)
+    #             oelbrenner_aus()
+    #             print('Oelbrenner aus !!!!')
+    #             sleep(sleeptime)
+    #             tempcount +=1
+    #             print("10 Min heizen mit Solar, neue Temperatur: tBoiler=%.2f" %tBoiler)
+    #             print("tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime()))
                 
-            elif tBoiler >= sollTempBoiler:
-                break
+    #         elif tBoiler >= sollTempBoiler:
+    #             break
             
-            else:
-                hahnstatus_auf = True
-                print("Letz's heat the fucking Boiler!  tBoiler=%.2f tPuffer:%.2f" %tBoiler %tPuffer)
+    #         else:
+    #             hahnstatus_auf = True
+    #             print("Letz's heat the fucking Boiler!  tBoiler=%.2f tPuffer:%.2f" %tBoiler %tPuffer)
                
 
             
 
     Schleifenzaehler =+ 1
-    sleep(30)
+    sleep(60)
 
     # Check if RestartTime 5:00
 
@@ -203,4 +211,4 @@ while(True):
 
 
 
-os.system("sudo shutdown -r 0 ")
+os.system("sudo shutdown -r 40 ")
