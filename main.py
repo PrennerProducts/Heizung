@@ -47,7 +47,7 @@ hahnstatus_auf = None # Initialisierung des Dreiwegehahnstatus mit None da die l
 
 sleep(5) # Bevor die Regelschleife startet, sollten wir warten, bis Temperatursensor gelesen und Aussentemperatur vom Server abgefragt wurden.
 
-logging.basicConfig(filename="heizung.log",level=logging.INFO,format="%(asctime)s %(message)s" )
+logging.basicConfig(filename="heizung.log",filemode="a", level=logging.INFO,format="%(asctime)s %(message)s" )
 
 
 #vorlaufpumpe_an()  # Vorlaufpumpe nun dauerhaft an
@@ -68,7 +68,8 @@ while(True):
     mystring = '%s' %"tAussen=%.1f" %tAussen, "tSoll=%.1f" %tSoll, "tIst=%.1f" %tIst, "tDelta=%+.1f" %tDelta, "Zyklus: {0:2d}/{1}".format(Schleifenzaehler%REGELINTERVALL+1, REGELINTERVALL), "Historie:", historieString, "tPuffer=%.2f" %tPuffer, "tBoiler=%.2f" %tBoiler, time.strftime('%H:%M', time.localtime())
     logging.info(mystring)
     
-    if Schleifenzaehler % REGELINTERVALL == 0: # Alle 30 Sekunden soll nachgeregelt werden
+    if Schleifenzaehler % REGELINTERVALL == 0: # Alle 5 Minuten soll nachgeregelt werden
+        print("Regelintervall!")
         tDeltaRegel = max(-MAX_REGELDIFFERENZ, min(tDelta, MAX_REGELDIFFERENZ)) # tDelta auf Regelbereich begrenzen
         if tDeltaRegel > HYSTERESE_VORLAUFTEMPERATUR:
             stellzeit = tDeltaRegel * STELLZEIT_PRO_KELVIN_TEMP_DIFF
@@ -93,7 +94,7 @@ while(True):
 
 
     # Solarpufferwaerme_in_Heizung.py implementierung
-    if tBoiler >= (sollTempBoiler- BoilerHysterese):
+    if tBoiler >= (sollTempBoiler):
         if Schleifenzaehler % REGELINTERVALL == 1:
             print("Boiler ist Warm Normaler Modus! Boilerpumpe ist aus!")
             logging.info("Boiler ist Warm Normaler Modus! Boilerpumpe ist aus!")
@@ -219,7 +220,7 @@ while(True):
 
             
 
-    Schleifenzaehler =+ 1
+    Schleifenzaehler += 1
     sleep(60)
 
     # Check if RestartTime 5:00
