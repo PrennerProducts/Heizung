@@ -53,6 +53,14 @@ logging.basicConfig(filename="heizung.log",filemode="a", level=logging.INFO,form
 #vorlaufpumpe_an()  # Vorlaufpumpe nun dauerhaft an
 
 logging.info("Starte Heizungssteuerung while(True)")
+# ASCI ART
+print(" __  __      _              _   _      _                 ")
+print("|  \/  | ___(_)_ __   ___  | | | | ___(_)_____ __   __ _ ")
+print("| |\/| |/ _ \ | '_ \ / _ \ | |_| |/ _ \ |_  / '_ \ / _` |")
+print("| |  | |  __/ | | | |  __/ |  _  |  __/ |/ /| | | | (_| |")
+print("|_|  |_|\___|_|_| |_|\___| |_| |_|\___|_/___|_| |_|\__, |")
+print("                                                   |___/ ")
+
 while(True):
     tAussen = Wetter.aussentemperatur
     tIst = Temperatursensor.vorlauftemperatur
