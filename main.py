@@ -15,7 +15,7 @@ PUFFERHYSTERESE =  5 # 7 Temperaturbereich, innerhalb dem nicht nachgeregelt wir
 #####################################################################################################
 # BoilerPumpe:
 BOILERINTERVALL = 10 # nur alle %f Minuten sollte die Pumpe an oder aus geschalten werden
-sollTempBoiler = 42 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
+sollTempBoiler = 40 # Temperatur auf die der Warmwasserboiler aufgeheizt werden soll
 BoilerHysterese = 2 # Hysterese
 
 ######################################################################################################
@@ -144,6 +144,8 @@ while(True):
         print("Boilerintervall kontrolliere Boilertemp=%.2f" %tBoiler)
         logging.info("Boilerintervall kontrolliere Boilertemp=%.2f" %tBoiler)
         if tBoiler < (sollTempBoiler):
+            sollTempBoiler = 42
+            print("sollTempBoiler = 42")
             if hahnstatus_auf == None:
                 boiler_pumpe_an()
                 dreiWegeZu(hahnzeit)
@@ -178,7 +180,9 @@ while(True):
         
         else:
             boiler_pumpe_aus()
+            sollTempBoiler = 40
             print("Boiler ist warm, Pumpe ist aus")
+            print("sollTempBoiler = 40")
             logging.info("Boiler ist warm, Pumpe ist aus")
     
     
