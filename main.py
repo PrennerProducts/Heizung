@@ -94,7 +94,7 @@ while(True):
 
 
     # Solarpufferwaerme_in_Heizung.py implementierung
-    if tBoiler >= (sollTempBoiler):
+    if tBoiler >= (sollTempBoiler - BoilerHysterese):
         if Schleifenzaehler % REGELINTERVALL == 1:
             print("Boiler ist Warm Normaler Modus! Boilerpumpe ist aus!")
             logging.info("Boiler ist Warm Normaler Modus! Boilerpumpe ist aus!")
@@ -135,7 +135,7 @@ while(True):
     if Schleifenzaehler % BOILERINTERVALL == 0: # alle BEULERINTERVALL sekunden soll die Boilerpumpe kontrolliert werden und ggf An- oder Ausgeschaltet werden.
         print("Boilerintervall kontrolliere Boilertemp=%.2f" %tBoiler)
         logging.info("Boilerintervall kontrolliere Boilertemp=%.2f" %tBoiler)
-        if tBoiler < (sollTempBoiler):
+        if tBoiler < (sollTempBoiler - BoilerHysterese):
             if hahnstatus_auf == None:
                 boiler_pumpe_an()
                 dreiWegeZu(hahnzeit)
